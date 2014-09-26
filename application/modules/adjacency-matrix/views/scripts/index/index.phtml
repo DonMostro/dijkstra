@@ -1,0 +1,557 @@
+         <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        
+          ga('create', 'UA-42061953-1', 'donmostro.com');
+          ga('send', 'pageview');
+        
+        </script>
+        <style type="text/css">
+            #wrapper form {
+                border: ridge 2px;
+                background-color: rgb(98, 128, 120);
+                color: #fff;
+            }
+            
+            #wrapper form table {
+                margin: 0 auto;
+                padding: 10px;
+            }
+            
+            #wrapper form a {
+                color: #fff;
+            }
+            
+            #wrapper td, #wrapper th{
+                white-space: nowrap;
+            }
+            
+            #wrapper input {
+                text-align:right;
+            }
+            
+            #wrapper {
+                width: 960px;
+                padding: 8px;
+                margin: 0 auto;
+            }
+            
+            #myForm, #reducedMatrix {
+                overflow: auto;
+            }
+            
+            .sign {
+                text-align: right;
+                margin: 0px;
+                font-size: 1em;
+            }
+            
+            .auxLink{
+                float: right;
+                padding: 0px 13px 3px 0;
+                font-size: 10pt;
+                display: inline;
+                top: -16px;
+                position: relative;
+            }
+            #solution {
+                margin: 0 auto;
+                padding: 10px;
+                display: table;
+                text-align: center;
+            }
+            
+            .total{
+                padding: 6px;
+                border: 1px solid;
+                background-color: rgb(0, 241, 19);
+                color: #fff;
+                font-weight: bold;
+                min-width: 26px;
+                height: 26px;
+                float: right;
+            }
+            
+            .node {
+                padding: 6px;
+                border: 1px solid;
+                background-color: rgb(98, 128, 120);
+                color: #fff;
+                font-weight: bold;
+                width: 26px;
+                height: 26px;
+                float: left;
+            }
+            
+            #solution .row{
+                display: table-row;
+            }
+            
+            .tip {
+                text-align: right;
+                font-size: 13px;
+            }
+            
+        </style>
+        <script type="text/javascript" src="<?=BASE_URL?>/js/Graph.js"></script>
+    </head>
+    <body>
+         <div id="wrapper">
+            <hr/>
+            <form onsubmit="return createMatrix(this);">
+                <table>
+                    <tr>
+                        <th>
+                            N&uacute;mero de Nodos:
+                        </th>
+                        <td>
+                            <input type="text" name="rowsCols" id="rowsCols" size="1" maxlength="2" onblur="this.value=toInt(this.value)" />
+                        <td>
+                        <th colspan="2">
+                            <input type="submit" value="Crear Matriz" />
+                        </th>
+                    </tr>
+                </table>
+            </form>
+           
+            <form onsubmit="return readMatrix(this);" id="myForm" name="myForm">
+               <table id="myTableForm">
+               </table>
+            </form>
+            <div id="solution"></div>
+        </div>
+
+        <script>
+            /**
+            * Objeto javascript que representa matriz principal
+            * @var Object
+            * @example: {a:{b:3,c:1},b:{a:2,c:1},c:{a:4,b:1}}
+            */
+            var map = {};
+            /**
+            * Objeto que procesa la lógica de caminos óptimos en base a map
+            */
+            var graph = new Graph(map);
+            
+            /**
+            * Número de filas y columnas
+            * @var int
+            */
+            var rowsCols = 0;
+            /**
+            * Nodos posibles, si se quiere cambiar la notación o cantidad de estos se puede modificar acá en forma segura
+            * @var Array
+            */
+            var nodes = [
+                'V0', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11', 'V12', 'V13', 'V14',
+                'V15', 'V16', 'V17', 'V18', 'V19', 'V20', 'V21', 'V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'V29'
+            ];
+            
+            /**
+            * Extrae el índice de un elemento de array
+            *
+            * @param Array input
+            * @param search_value string
+            * @param argStrict boolean
+            * @returns Array
+            */
+            var array_keys = function (input, search_value, argStrict) {
+                var search = typeof search_value !== 'undefined',
+                tmp_arr = [],
+                strict = !!argStrict,
+                include = true,
+                key = '';
+
+                if (input && typeof input === 'object' && input.change_key_case) { 
+                    return input.keys(search_value, argStrict);
+                }
+
+                for (key in input) {
+                    if (input.hasOwnProperty(key)) {
+                        include = true;
+                        if (search) {
+                            if (strict && input[key] !== search_value) {
+                                include = false;
+                            }
+                            else if (input[key] != search_value) {
+                                include = false;
+                            }
+                        }
+                        if (include) {
+                            tmp_arr[tmp_arr.length] = key;
+                        }
+                    }
+                }
+                return tmp_arr;
+            }
+            
+            /**
+            * Convierte un numero a entero usando expresión regular
+            * @param mixed
+            * @returns int
+            */
+            var toInt = function(value) {
+                var expr = /^(-)?[0-9]+$/;
+                return (expr.test(value)) ? value : 0;
+            }
+            
+            /**
+             * Convierte un numero a float usando expresión regular
+             * @param mixed
+             * @returns float
+             */
+            var toFloat = function(value) {
+                var expr = /^-?\d+(\.\d+)?$/;
+                return (expr.test(value)) ? value : 0;
+            }
+            
+            /**
+             * Permite insertar nuevo elemento DOM al final de otro elemento DOM de referencia 
+             * @param newElement DOM element
+             * @param targetElement DOM element
+             * @returns void
+             */
+            var insertAfter = function(newElement, targetElement) {
+                var parent = targetElement.parentNode;
+                if (parent.lastchild == targetElement) {
+                    parent.appendChild(newElement);
+                } else {
+                    parent.insertBefore(newElement, targetElement.nextSibling);
+                }
+            }
+            
+            /**
+            * Llena formulario con números aleatorios
+            * @param form DOM element form
+            * @returns void
+            */
+            var randomFill = function(form) {
+                if (form == undefined) form = document.getElementById('myForm');
+                var inputs = form.getElementsByTagName('input');
+                var n = inputs.length - 1;
+                var rand;
+                for (var i = 0; i < n; i ++) {
+                    rand = Math.floor(Math.random()*10);
+                    if (!inputs[i].disabled) inputs[i].value = rand <= 5 ? rand : 0;
+                }
+                readMatrix(document.getElementById('myForm'));
+            }
+            
+            /**
+             * Recibe parametros e invoca metodos para crear tabla HTML en el que se ingresa matriz principal
+             * @param form DOM element form
+             * @returns false;
+             */
+            var createMatrix = function (form) {
+                try {
+                    form['rowsCols'].value = toInt(form['rowsCols'].value);
+                    rowsCols = form['rowsCols'].value*1;
+                    
+                    if (rowsCols <= 1) {
+                        alert('La matriz debe tener por lo menos dos elementos.');
+                    } else if (rowsCols > nodes.length) {
+                        alert('La matriz puede tener hasta ' + nodes.length + ' elementos.');
+                    } else {
+                        createTableMatrix(rowsCols, 'myTableForm');
+                    }
+                    return false;
+                } catch (e) {
+                    console.log(e.message);
+                }
+            }
+            
+            /**
+            * Crea tabla HTML en el que se ingresa matriz principal
+            * @param int rowsCols
+            * @param string tableId
+            * @returns false
+            */
+            var createTableMatrix = function(rowsCols, tableId) {
+                try {
+                    var myTableForm = document.getElementById(tableId);
+                     
+                    var row;
+                    var cell;
+                    var input;
+                    var submit;
+                    var header;
+                    
+                    myTableForm.innerHTML = '';
+                    
+                    row = document.createElement("tr");
+                    header = document.createElement("th");
+                    row.appendChild(header);
+                    
+                    for (var i=0; i<rowsCols; i++) {
+                        header = document.createElement("th");
+                        header.innerHTML = nodes[i];
+                        row.appendChild(header);
+                    }
+                    myTableForm.appendChild(row);
+                    
+                    for (var i=0; i<rowsCols; i++) {
+                        row = document.createElement("tr");
+                        header = document.createElement("th");
+                        header.innerHTML = nodes[i];
+                        row.appendChild(header);
+                        for (var j=0; j<rowsCols; j++) {
+                            input = document.createElement("input");
+                            input.setAttribute("type", "text");
+                            input.setAttribute("size", "1");
+                            input.setAttribute("maxlenght", "10");
+                            input.setAttribute("onchange", "this.value=toInt(this.value);readMatrix(document.getElementById('myForm'))");
+                            input.setAttribute("name", "input["+i+"]["+j+"]");
+                            input.setAttribute("id", "input["+i+"]["+j+"]");
+                            
+                            if (i == j) {
+                                input.setAttribute("value", "0");
+                                input.setAttribute("disabled", "disabled");
+                            }
+                           
+                            cell = document.createElement("td");
+                            cell.appendChild(input);
+                            
+                            row.appendChild(cell);
+                            
+                        }
+                        myTableForm.appendChild(row);
+                    }
+                    
+                    row = document.createElement("tr");
+                    cell = document.createElement("th");
+                    cell.setAttribute("colspan", rowsCols + 1);
+                    submit = document.createElement("input");
+                    submit.setAttribute("type", "submit");
+                    submit.setAttribute("value", "Aceptar");
+                    
+                    cell.appendChild(submit);
+                    row.appendChild(cell);
+                    myTableForm.appendChild(row);
+                    
+                    if (document.getElementById('randomizeLink') == undefined) {
+                        myA = document.createElement("a");
+                        myA.setAttribute('id', 'randomizeLink');
+                        myA.setAttribute("href", "javascript:randomFill()");
+                        myA.setAttribute("class", "auxLink");
+                        myA.innerHTML = 'Números aleatorios';
+                        insertAfter(myA, myTableForm);
+                    }
+                } catch (e) {
+                    console.debug(e.message);
+                }
+                return false;
+            }
+            
+            /**
+             * Lee matriz principal e inicializa clase Graph
+             * @param form DOM element form
+             * @returns false
+             */
+            var readMatrix = function(form) {
+                var value;
+                try {
+                    map = {};
+                    for (var i=0; i<rowsCols; i++) {
+                        map[nodes[i]] = {}; 
+                        for (var j=0; j<rowsCols; j++) {
+                            value = parseInt(form['input['+i+']['+j+']'].value);
+                            if (value > 0) {
+                                map[nodes[i]][nodes[j]] = value;
+                                form['input['+i+']['+j+']'].value = value;
+                            }
+                        }
+                    }
+                    createDistancesForm(map);
+                    
+                    console.log('Leido map:');
+                    console.log(map);
+                    graph = new Graph(map);
+                    document.getElementById('solution').innerHTML = '';
+                } catch (e) {
+                    console.log(e);
+                }
+                
+                return false;
+            }
+            
+            /**
+            * Elimina elemento DOM por identificador, si es que existe.
+            * @param id string
+            * @returns void
+            */
+            var dropElementById = function(id) {
+                if (document.getElementById(id) != undefined) {
+                    var dropMe = document.getElementById(id);
+                    dropMe.parentNode.removeChild(dropMe);
+                }
+            }
+            
+            /**
+             * Crea formulario para ingresar origen y destino
+             * @param map Object
+             * @returns void
+             */
+            var createDistancesForm = function (map) {
+                dropElementById("distancesForm");
+                
+                var form = document.createElement("form");
+                var table = document.createElement("table");
+                var row = document.createElement("tr");
+                var cell;
+                var options = [];
+                var option;
+                var select;
+                var submit;
+                
+                form.setAttribute("onsubmit", "return findShortestPath(this)");
+                form.setAttribute("id", "distancesForm");
+                form.appendChild(table);
+
+                
+                var i = 0;
+                for (var property in map) {
+                    option = new Option(property, property);
+                    if (i == 0) option.selected = true;
+                    options.push(option);
+                    i++;
+                }
+                
+                cell = document.createElement("th");
+                cell.innerHTML = 'desde:';
+                row.appendChild(cell);
+                
+                cell = document.createElement("td");
+                select = document.createElement('select');
+                select.setAttribute('name', 'from');
+                
+                for (var i=0; i<options.length; i++) {
+                    select.appendChild(options[i]);
+                }
+                cell.appendChild(select);
+                row.appendChild(cell);
+
+                options = [];
+
+                for (var property in map) {
+                    option = new Option(property, property);
+                    if (i == 0) option.selected = true;
+                    options.push(option);
+                    i++;
+                }
+
+                submit = document.createElement("input");
+                submit.setAttribute("type", "submit");
+                submit.setAttribute("value", "Recorrer");
+                
+                cell = document.createElement("th");
+                cell.appendChild(submit);
+                
+                row.appendChild(cell);
+                
+                table.appendChild(row);
+                
+                document.getElementById('wrapper').appendChild(form);
+                
+            }
+            
+            /**
+             * Encuentra camino mas corto según origen y destino ingresados en formulario
+             * @param form DOM element form
+             * @returns false
+             */
+            var findShortestPath = function(form) {
+                try {
+                    var from = form['from'].value;
+                    var to;
+                    var nodesResult;
+                    var message = '';
+                    var table = document.getElementById('solution');
+                    var row;
+                    var cell;
+                    table.innerHTML = '';
+                    
+                    for (var j = 0; j < rowsCols; j++) {
+                        to = nodes[j];
+                        if (from != to) {
+                            nodesResult = graph.findShortestPath(from, to);
+                            var path = '';
+                            var current;
+                            var previous;
+                            var total=0;
+                            var input;
+                            var error = false;
+                            var title;
+                            row = document.createElement("div");
+                            row.setAttribute("class", "row");
+                            
+                            if (nodesResult != null) {
+                                for (var i=0; i<nodesResult.length; i ++) {
+                                    if (i <= 0) {
+                                        cost = 0;
+                                        title = 'Nodo inicial';
+                                    } else {
+                                        current = array_keys(nodes, nodesResult[i])[0];
+                                        previous = array_keys(nodes, nodesResult[i-1])[0];
+                                        console.debug(current + "-" + previous);
+                                        
+                                        input = document.getElementById('input['+previous+']['+current+']');
+                                        cost = parseInt(input.value);
+                                        title = "+" + cost;
+                                    }
+                                    
+                                    cell = document.createElement('div');
+                                    cell.innerHTML = nodesResult[i];
+                                    cell.setAttribute("title", title);
+                                    cell.setAttribute("class", "node");
+                                    row.appendChild(cell);
+                                    total += cost;
+                                }
+                                cell = document.createElement('div');
+                                cell.setAttribute("class", "total");
+                                cell.setAttribute("title", "Costo total");
+                                cell.innerHTML = total;
+                                row.appendChild(cell);
+                            } else {
+                                cell = document.createElement('div');
+                                cell.setAttribute("class", "node");
+                                cell.setAttribute("title", "Nodo inicial");
+                                cell.innerHTML = from;
+                                row.appendChild(cell);
+                                cell = document.createElement('div');
+                                cell.setAttribute("class", "node");
+                                cell.setAttribute("title", ":(");
+                                cell.innerHTML = to;
+                                row.appendChild(cell);
+                                cell = document.createElement('div');
+                                cell.setAttribute("class", "total");
+                                cell.setAttribute("style", "background-color: red;");
+                                cell.setAttribute("title", "No hay Camino");
+                                cell.innerHTML = ':(';
+                                row.appendChild(cell);
+                            }
+                            table.appendChild(row);
+                            if (isNaN(total)) error = true; 
+                            
+                            if (error) {
+                                alert('Debe inicializar la matriz');
+                                return false;
+                            }
+                            
+                            table.appendChild(row);
+                        }
+                    }
+                    dropElementById('tip');
+                    var tip = document.createElement("p");
+                    tip.setAttribute("class", "tip");
+                    tip.setAttribute("id", "tip");
+                    tip.innerHTML = '<b>Tip:</b> para ver costos entre nodos, detener el cursor del mouse sobre la tabla de resultados.';
+                    insertAfter(tip, document.getElementById('solution'));
+                    
+                } catch (e) {
+                    console.log(e);
+                }
+                return false;
+            }
+        </script>

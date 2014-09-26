@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="Mensaje" type="dojo-simple-crud" target="LinksModel" edit="true" add="true" delete="true" list="false" clone="true"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="components.xsd">
+    <elements>
+        <element name="Id Camino" target="paths_id" type="hidden" edit="false" add="true" clone="false"/>
+        <element name="Origen" target="nodes_id_from" type="dijit-form-filtering-select" table="NodesModel" tableMethod="selectFromGroup" edit="true" add="true" clone="false"/>
+        <element name="Destino" target="nodes_id_to" type="dijit-form-filtering-select" table="NodesModel" tableMethod="selectFromGroup" required="true" visible="true" edit="true" add="true"/>
+        <element name="Costos" target="cost" type="dijit-form-validation-text-box" regExp="^[1-9][0-9]{0,10}$" defaultValue="1" maxlength="10" required="true" visible="true" edit="true" add="true"/>
+    </elements>
+    <forms ajax="true">
+        <onSubmit>
+            var domForm = dojo.byId(this.id);
+            if (domForm['data[nodes_id_from]'].value == domForm['data[nodes_id_to]'].value) {
+                utils.showMessage('El origen del enlace no puede ser igual al destino del enlace.');
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_bonus_game_no_match.wav"); // buffers automatically when created
+                    snd.play();
+                }
+                return false;
+            }
+        </onSubmit>
+        <onPostSubmit>
+        <![CDATA[
+            if (response.state == 'ADD_OK' || response.state == 'UPDATE_OK') {
+                //'@response': respuesta ajax estandar para todas las operaciones CRUD de admportal, esta viene sobrecargada en TreeLinksModel::$_more
+                //'@pathsId': variable global inicializada en el javascript embebido en template .phtml
+                addLink(response, pathsId);
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_nspade_match.wav"); // buffers automatically when created
+                    snd.play();
+                }
+            } else {
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_bump.wav"); // buffers automatically when created
+                    snd.play();
+                }
+            }
+        ]]>
+        </onPostSubmit>
+    </forms>
+</component>

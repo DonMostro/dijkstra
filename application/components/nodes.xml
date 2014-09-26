@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="Mensaje" type="dojo-simple-crud" target="NodesModel" edit="true" add="true" delete="true" list="false" clone="true"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="components.xsd">
+    <elements>
+        <element name="Id Camino" target="paths_id" type="hidden" edit="false" add="true" clone="true"/>
+        <element name="Nombre" target="title" width="70" maxlength="3" type="dijit-form-validation-text-box" regExp="^[a-zA-Z0-9]+$" 
+        invalidMessage="Sólo letras y números son permitidos"
+        required="true" visible="true" edit="true" add="true" clone="true"/>
+    </elements>
+    <forms ajax="true">
+        <onPostSubmit>
+        <![CDATA[
+            if (response.state == 'ADD_OK' || response.state == 'UPDATE_OK') {
+                //@response: respuesta ajax estandar para todas las operaciones CRUD de admportal, esta viene sobrecargada en NodesModel::$_more
+                //@pathsId: variable global inicializada en el javascript embebido en template .phtml
+                addNode(response, pathsId);
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_raccoon_transform.wav"); // buffers automatically when created
+                    snd.play();
+                }
+            } else {
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_bump.wav"); // buffers automatically when created
+                    snd.play();
+                }
+            }
+        ]]>
+        </onPostSubmit>
+    </forms>
+</component>

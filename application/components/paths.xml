@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="components.xsd" 
+    name="Caminos" type="dojo-simple-crud" target="PathsModel" js="paths.js"
+    plugins="{menus:{selectedRegionMenu: sMenu}, pagination: {defaultPageSize:25, maxPageStep: 5 }}" onRowDblClick="loadPathsContext()"
+    edit="true" add="true" delete="true" list="true" 
+>
+    <elements>
+        <element name="ID" target="id" type="dijit-form-validation-text-box" visible="true" edit="readonly" add="false"/>
+        <element name="Nombre" target="title" type="dijit-form-validation-text-box" required="true" visible="true" add="true" edit="true" clone="true"/>
+        <element name="Fecha de Creaci&amp;oacute;n" target="create_date" type="dijit-form-validation-text-box" visible="true" required="true" edit="readonly" add="false" clone="readonly"/>
+    </elements>
+    <searchers>
+        <group name="Buscar">
+            <element target="title"/>
+        </group>
+    </searchers>
+</component>

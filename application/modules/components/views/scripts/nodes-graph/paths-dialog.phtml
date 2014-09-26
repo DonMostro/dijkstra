@@ -1,0 +1,149 @@
+<form dojoType="dijit.form.Form" target="ifrm_process" id="costos_form_add" class="tabForm" jsId="costos_form_add" name="costos_form_add" encType="multipart/form-data"  action="" onsubmit="return false" method="post">
+    <div class="brclear"></div>
+    <div id="costos_tab_add1" class="settingsArea" style="display:block">
+        <table>
+            <tr style="display:none">
+                <th><label for="paths_id">Id Camino</label></th>
+                <td><input dojoType="dijit.form.ValidationTextBox" type="hidden" id="costos__add_1" name="data[paths_id]" value="<?=$this->pathsId?>" /></td>
+            </tr>
+            <tr>
+                <th><label for="nodes_id_from">Origen</label></th>
+                <td>
+                    <select dojoType="dijit.form.FilteringSelect" id="costos__add_2" name="data[nodes_id_from]" onload="dijit.byId('costos__add_2').set('value', dijit.byId('costos__add_2').get('value'));" 
+                    required="true" >
+<?php 
+foreach ($this->nodes as $node) :
+?>
+                        <option value="<?=$node['id']?>" <?=$node['id'] == $this->nodesIdFrom ? 'selected="selected"' : ''?>><?=$node['title']?></option>
+<?php 
+endforeach;
+?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="nodes_id_to">Destino</label></th>
+                <td>
+                    <script>
+                    setTimeout(function () {
+                        if (dijit.byId('costos__add_3').get('value') == '') dijit.byId('costos__add_3').set('value', false);
+                        dojo.connect(dijit.byId('costos__add_3'), 'onchange', function(e){
+                            console.debug('onchange');
+                            if (dijit.byId('costos__add_3').get('value') == '') dijit.byId('costos__add_3').set('value', false);
+                        });
+                    }, 100);
+                    </script>
+                    <select dojoType="dijit.form.FilteringSelect" id="costos__add_3" name="data[nodes_id_to]" onload="dijit.byId('costos__add_3').set('value', dijit.byId('costos__add_3').get('value'));" 
+                        required="true" >
+<?php 
+foreach ($this->nodes as $node) :
+?>
+                        <option value="<?=$node['id']?>" <?=$node['id'] == $this->nodesIdTo ? 'selected="selected"' : ''?>><?=$node['title']?></option>
+<?php 
+endforeach;
+?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script type="dojo/method" event="onSubmit">
+    if (this.validate()) {
+        try {
+            dojo.on(dijit.byId('nodes_xmldialog_findpath'), 'onhide', function(e){
+                console.debug('hide');
+                dojo.query('.dijitDialogUnderlay').forEach(function(dialog, i) {
+                    if (i==0) opacityOrig = dialog.style.opacity;
+                    dialog.style.opacity = 0.5;
+                });
+            });
+            var domForm = dojo.byId(this.id);
+            var from = domForm['data[nodes_id_from]'].value;
+            var to = domForm['data[nodes_id_to]'].value;
+            var snd;
+
+            var connector;
+            if (from == to) {
+                if (supportsAudio()) {
+                    snd = new Audio(base_url + "/sounds/smb3_bonus_game_no_match.wav"); // buffers automatically when created
+                    snd.play();
+                }
+                utils.showMessage('El origen no puede ser igual al destino.');
+                return false;
+            } else {
+                nodesMap = readMatrix(lines);
+                nodesGraph = new Graph(nodesMap);
+                nodesResult = nodesGraph.findShortestPath(from, to);
+                var timeout = 1000;
+                var loopTimeout;
+                var opacityOrig;
+                var myLink;
+
+                if (nodesResult != null) {
+                    dojo.query('.dijitDialogUnderlay').forEach(function(dialog, i) {
+                        if (i==0) opacityOrig = dialog.style.opacity;
+                        dialog.style.opacity = 0;
+                    });
+                    var total = 0;
+                    var myCost; 
+                    dojo.forEach(nodesResult, function(n, i){
+                        loopTimeout = timeout * i;
+                        circles[n].moveToFront();
+                        circlesLabels[n].moveToFront();
+                        
+                        if (i > 0) {
+                            myLink = dojo.query('path[nodesidfrom="'+nodesResult[i-1]+'"][nodesidto="'+nodesResult[i]+'"]');
+                            if (myLink != undefined && myLink[0] != undefined) {
+                                myCost = myLink[0].getAttribute('cost');
+                                total += myCost*1;
+                            }
+                        }
+                        setTimeout(function(){ 
+                            highLightShape(circles[parseInt(n)]); 
+                            if (supportsAudio()) {
+                                if (i < nodesResult.length - 1) {
+                                    snd = new Audio(base_url + "/sounds/smb3_jump.wav"); // buffers automatically when created
+                                    snd.play();
+                                    if (i > 0) utils.showMessage("+"+dojo.query('path[nodesidfrom="'+nodesResult[i-1]+'"][nodesidto="'+nodesResult[i]+'"]')[0].getAttribute('cost'));
+                                } else {
+                                    snd = new Audio(base_url + "/sounds/smb3_pipe.wav"); // buffers automatically when created
+                                    snd.play();
+                                    myLink = dojo.query('path[nodesidfrom="'+nodesResult[i-1]+'"][nodesidto="'+nodesResult[i]+'"]');
+                                    if (myLink != undefined && myLink[0] != undefined) {
+                                        utils.showMessage("+"+dojo.query('path[nodesidfrom="'+nodesResult[i-1]+'"][nodesidto="'+nodesResult[i]+'"]')[0].getAttribute('cost'));
+                                        utils.showMessage('Total: ' + total);
+                                    }
+                                }
+
+                            }
+                        }, loopTimeout);
+                    });
+                    
+                    setTimeout(function(){ 
+                        dojo.query('.dijitDialogUnderlay').forEach(function(dialog, i) {
+                            dialog.style.opacity = 0.5;
+                        });
+                    }, loopTimeout + (timeout*3));
+                    
+                } else {
+                    if (supportsAudio()) {
+                        snd = new Audio(base_url + "/sounds/smb3_bump.wav"); // buffers automatically when created
+                        snd.play();
+                    }
+                    utils.showMessage('No hay camino');
+                }
+            }
+        } catch (e) {
+            console.debug(e);
+            alert(e.message);
+        }
+        
+        return false;
+    } else {
+        alert('Por favor corrija los campos marcados.');
+        return false;
+    }
+    return true;
+    </script>
+    <button dojoType="dijit.form.Button" id="costos_tabs_btn_saveadd" type="submit" />Buscar</button>
+</form>

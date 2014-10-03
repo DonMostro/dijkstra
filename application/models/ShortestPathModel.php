@@ -1,6 +1,6 @@
 <?php
 
-class Model_ShortestPathModel
+class ShortestPathModel
 {
 
 

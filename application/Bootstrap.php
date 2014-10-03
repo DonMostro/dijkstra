@@ -1,9 +1,21 @@
 <?php
-
+/**
+ *
+ * Gestor de arranque de la aplicación.
+ *
+ */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+    /**
+     *
+     * @var Zend_Config
+     */
     protected $_config;
     
+    /**
+     * Inicia el autoloader de clases.
+     * @return void
+     */
     protected function _initAutoLoad()
     {
         require_once 'Zend/Loader/Autoloader.php';
@@ -12,7 +24,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $loader = Zend_Loader_Autoloader::getInstance();
         $loader->setFallbackAutoloader(true);
         set_include_path('.'
-            . PATH_SEPARATOR . ROOT_DIR.'/library'
+            . PATH_SEPARATOR . APPLICATION_PATH.'/../library'
             . PATH_SEPARATOR . ADMPORTAL_APPLICATION_PATH . '/../library'
             . PATH_SEPARATOR . APPLICATION_PATH . '/models'
             . PATH_SEPARATOR . ADMPORTAL_APPLICATION_PATH . '/models'
@@ -23,6 +35,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         //$loader->pushAutoloader(new Zwei_Autoloader_PhpThumb());
     }
     
+    /**
+     * Carga constantes globales
+     * @return void
+     */
     public function loadConstants()
     {
         if (!defined('PHP_VERSION_ID')) {
@@ -41,8 +57,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         defined('ROOT_DIR') || define('ROOT_DIR', dirname(dirname(__FILE__)));
         defined('APPLICATION_PATH') || define('APPLICATION_PATH', ROOT_DIR . '/application');
         defined('COMPONENTS_ADMIN_PATH') || define('COMPONENTS_ADMIN_PATH', APPLICATION_PATH.'/components');
-        defined('BASE_URL') || define('BASE_URL', PROTO.$_SERVER['HTTP_HOST'].$eop);
+        defined('BASE_URL') || define('BASE_URL', PROTO.$_SERVER['HTTP_HOST'].dirname($_SERVER["SCRIPT_NAME"]).$eop);
         defined('TEMPLATE') || define('TEMPLATE', '');//template alternativo [TODO] esto es para desarrollo futuro
+
         
         // Define application environment
         defined('APPLICATION_ENV')
@@ -64,9 +81,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
      */
     public function getConfig()
     {
-        return new Zend_Config_Ini(ROOT_DIR.'/application/configs/application.ini', APPLICATION_ENV);
+        return new Zend_Config($this->getOptions());
     }
     
+    /**
+     * Corre la aplicación.
+     * @return void
+     */
     public function run()
     {
         try {
@@ -78,14 +99,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         }    
         
         // Inicializar el MVC
-        Zend_Layout::startMvc(array('layoutPath' => ROOT_DIR.'/application/views/layouts'));
+        Zend_Layout::startMvc();
+        Zend_Layout::getMvcInstance()->disableLayout();
         
-
         // Run!
-        
         $frontController = Zend_Controller_Front::getInstance();
         //Plugin Timeout de Sesión
-        $frontController->registerPlugin(new Zwei_Controller_Plugin_TimeOutHandler());
+        $frontController->registerPlugin(new Zwei_Controller_Plugin_TimeOutHandler($this->_config));
         
         //Plugin para usar multiples carpetas aplication sobreescribibles
         $frontController->registerPlugin(new Zwei_Controller_Plugin_ApplicationPath());       
@@ -95,7 +115,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
         $frontController->throwExceptions(true);
         
-        $db = Zend_Db::factory($this->_config->resources->db);
+        if ($this->_config->resources->multidb) {
+            $this->bootstrap('multidb');
+            $resource = $this->getPluginResource('multidb');
+            $db = $resource->getDb('dn');//reemplazar 'dn' por el namespace multidb por defecto definido para el proyecto
+        } else {
+            $db = Zend_Db::factory($this->_config->resources->db);
+        }
         
         Zwei_Db_Table::setDefaultAdapter($db);
         Zwei_Db_Table::setDefaultLogMode($this->_config->zwei->db->table->logbook);

@@ -89,7 +89,7 @@ class Zwei_Admin_Auth
      * Authentification params against DB Table
      * @return Zend_Auth_Adapter_DbTable
      */
-    public function getAuthAdapter() {
+    public function getAuthAdapter($hash = 'MD5') {
         $resource = Zend_Controller_Front::getInstance()->getParam("bootstrap")->getResource("multidb");
         $dbAdapter = isset($resource) && $resource->getDb("auth") ?
             $resource->getDb("auth") :
@@ -103,9 +103,13 @@ class Zwei_Admin_Auth
         $authAdapter->setTableName($authUsersTable)
             ->setIdentityColumn($authUserName)
             ->setCredentialColumn($authPassword)
-            ->setCredentialTreatment('MD5(?) and approved="1"');
+            ->setCredentialTreatment($hash.'(?) and approved="1"');
         
-        Debug::write($authAdapter->getDbSelect()->__toString());
+    	if (!empty($hash)) {
+            $authAdapter->setCredentialTreatment($hash.'(?) and approved="1"');
+        } else {
+            $authAdapter->setCredentialTreatment('? and approved="1"');
+        }
         return $authAdapter;
     }
     
@@ -135,6 +139,38 @@ class Zwei_Admin_Auth
     
         $userInfo->groups = $groups;
         $authStorage->write($userInfo);
+        
+        /*Guardar sesion en base de datos, si tabla existe*/
+        try {
+            $db = Zend_Db_Table::getDefaultAdapter();
+            if ($db->describeTable('acl_session')) {
+                $aclSession = new AclSessionModel();
+                $row = $aclSession->find(Zend_Session::getId())->current();
+                if ($row) {
+                    $row->acl_users_id = $userInfo->id;
+                    $row->acl_roles_id = $userInfo->acl_roles_id;
+                    $row->ip = $_SERVER['REMOTE_ADDR'];
+                    $row->user_agent = $_SERVER['HTTP_USER_AGENT'];
+                    $row->save();
+                } else {
+                    if (PHP_SAPI !== 'cli') { //Un Redirector fuera de un controlador mata silenciosamente a phpunit ya que usa exit(), lo evitamos.
+                        $r = new Zend_Controller_Action_Helper_Redirector();
+                        $r->gotoUrl('/admin/login');
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            Console::error($e->getMessage(), true);
+        } //PDOException is not caught :facepalm:
+    }
+    
+    /**
+     * Limpia identidad Zend_Auth
+     * @return void
+     */
+    public function clearIdentity()
+    {
+        return Zend_Auth::getInstance()->clearIdentity();
     }
 }
 

@@ -1,0 +1,21 @@
+{
+	"name": "gamelena/dijkstra",
+	"description": "dijkstra",
+	"description": "Administrador Dijkstra",
+	"license": "GPL2",
+	"authors": [
+		{
+			"name": "rodrigo"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/DonMostro/tangerine"
+		}
+	],
+	"require-dev": {
+		"zweicom/admportal": "trunk"
+	},
+	"minimum-stability": "dev"
+}

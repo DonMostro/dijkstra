@@ -10,12 +10,12 @@
 	],
 	"repositories": [
 		{
-			"type": "vcs",
-			"url": "https://github.com/DonMostro/tangerine"
+			"type": "git",
+			"url": "https://github.com/DonMostro/tangerine.git"
 		}
 	],
 	"require-dev": {
-		"zweicom/admportal": "trunk"
+		"gamelena/tangerine": "dev-master"
 	},
 	"minimum-stability": "dev"
 }

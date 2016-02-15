@@ -1,4 +1,4 @@
-RewriteBase /index.php/
+RewriteBase /dijkstra/
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} -s [OR]

@@ -1,0 +1,7 @@
+.idea/
+.settings/
+vendor/
+.buildpath
+composer.lock
+cache.properties
+*.iml

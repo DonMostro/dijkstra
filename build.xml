@@ -2,7 +2,7 @@
 <project name="name-of-project" default="full-build">
 	<!-- By default, we assume all tools to be on the $PATH -->
 	<property name="db.username" value="root"/>
-	<property name="db.password" value="zweicom"/>
+	<property name="db.password" value="luckystrike"/>
 	
 	<property name="pdepend" value="pdepend" />
 	<property name="phpcpd" value="phpcpd" />
@@ -98,17 +98,16 @@
 		<exec executable="${mysql}" input="${basedir}/docs/db/createdb.sql" failonerror="true">
 			<arg value="--user=${db.username}"/>
 			<arg value="--password=${db.password}"/>
-			<arg value="--database=admportal"/>
 		</exec>
 		<exec executable="${mysql}" input="${basedir}/docs/db/admportal.sql" failonerror="true">
 			<arg value="--user=${db.username}"/>
 			<arg value="--password=${db.password}"/>
-			<arg value="--database=admportal"/>
+			<arg value="--database=dijkstra"/>
 		</exec>
-		<exec executable="${mysql}" input="${basedir}/docs/db/dijsktra.sql" failonerror="true">
+		<exec executable="${mysql}" input="${basedir}/docs/db/dijkstra.sql" failonerror="true">
 			<arg value="--user=${db.username}"/>
 			<arg value="--password=${db.password}"/>
-			<arg value="--database=admportal"/>
+			<arg value="--database=dijkstra"/>
 		</exec>
 	</target>
 

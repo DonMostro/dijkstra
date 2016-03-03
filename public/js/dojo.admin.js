@@ -1,6 +1,7 @@
 var globalOpc;
 var globalModuleId;
 var globalModule;
+var $globals = {};
 
 /**
  * carga inicial
@@ -11,7 +12,7 @@ var initLoad = function()
     admportal.loadEvents();
     admportal.loadLayoutSettings(dojo.byId("logosAdm"),dojo.byId("tituloAdm"), dojo.byId("zweicomLogo"), dojo.byId("zweicomLegend"));
     admportal.loadMainMenu();
-    //admportal.initListeners();
+    admportal.initListeners();
 };
 
 /**

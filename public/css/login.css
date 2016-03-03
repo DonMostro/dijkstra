@@ -107,7 +107,7 @@ HEADER
     font-weight: 300;
     font-size: 28px;
     line-height:34px;
-    color: #414848;
+    color: #50A032;
     text-shadow: 1px 1px 0 rgba(256,256,256,1.0);
     margin-bottom: 10px;
     text-align: center;
@@ -187,12 +187,12 @@ CONTENT
 }
 
 .user-icon {
-    top:97px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
+    top:102px; /* Positioning fix for slide-in, got lazy to think up of simpler method. */
     background: rgba(65,72,72,0.75) url(../images/user-icon.png) no-repeat center;  
 }
 
 .pass-icon {
-    top:156px;
+    top:168px;
     background: rgba(65,72,72,0.75) url(../images/pass-icon.png) no-repeat center;
 }
 
@@ -276,9 +276,9 @@ FOOTER
 /*******************
 CORPORATIVO
 *******************/
-.zweicomLogo
+.gamelenaLogo
 {
-	/*background-image: url(../images/logo-zweicom-trans.svg);*/
+	background-image: url(../images/logo-gamelena-trans.svg);
 	width: 322px;
 	height: 185px;
 	left: 81%;
@@ -293,7 +293,7 @@ CORPORATIVO
 	width: 103px;
 	height: 105px;
 	left: -7%;
-	top: 5%;
+	top: 6%;
 	z-index: 9999;
 	position: absolute;
 }

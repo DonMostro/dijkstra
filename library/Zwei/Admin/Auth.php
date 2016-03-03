@@ -59,6 +59,7 @@ class Zwei_Admin_Auth
         $auth = Zend_Auth::getInstance();
         
         if (!$auth->hasIdentity()) {
+            
             $authAdapter = self::getAuthAdapter();
             $authAdapter->setIdentity('invitado')
             ->setCredential('invitado');
@@ -76,14 +77,14 @@ class Zwei_Admin_Auth
             }
         }
         
-        $userInfo = $auth->getStorage()->read();
+        $userInfo = Zend_Auth::getInstance()->getStorage()->read();
         $options = Zend_Controller_Front::getInstance()->getParam("bootstrap")->getApplication()->getOptions();
         $config = new Zend_Config($options);
         if (isset($config->zwei->session->namespace)) {
             return (isset($userInfo->sessionNamespace) && $config->zwei->session->namespace == $userInfo->sessionNamespace) ? true : false;
         } else {
             return true;
-        }    
+        }
     }
     /**
      * Authentification params against DB Table
@@ -102,14 +103,14 @@ class Zwei_Admin_Auth
         
         $authAdapter->setTableName($authUsersTable)
             ->setIdentityColumn($authUserName)
-            ->setCredentialColumn($authPassword)
-            ->setCredentialTreatment($hash.'(?) and approved="1"');
+            ->setCredentialColumn($authPassword);
         
-    	if (!empty($hash)) {
+        if (!empty($hash)) {
             $authAdapter->setCredentialTreatment($hash.'(?) and approved="1"');
         } else {
             $authAdapter->setCredentialTreatment('? and approved="1"');
         }
+        
         return $authAdapter;
     }
     
@@ -133,7 +134,7 @@ class Zwei_Admin_Auth
         $groups = array();
     
         foreach ($buffGroups as $g) {
-            $groups[] = $g['id'];
+            $groups[] = $g['acl_groups_id'];
         }
     
     
@@ -151,6 +152,8 @@ class Zwei_Admin_Auth
                     $row->acl_roles_id = $userInfo->acl_roles_id;
                     $row->ip = $_SERVER['REMOTE_ADDR'];
                     $row->user_agent = $_SERVER['HTTP_USER_AGENT'];
+                    $row->created = time();
+                    
                     $row->save();
                 } else {
                     if (PHP_SAPI !== 'cli') { //Un Redirector fuera de un controlador mata silenciosamente a phpunit ya que usa exit(), lo evitamos.

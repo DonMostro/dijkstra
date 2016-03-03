@@ -1,6 +1,7 @@
 .idea/
 .settings/
 vendor/
+bower_components/
 .buildpath
 composer.lock
 cache.properties

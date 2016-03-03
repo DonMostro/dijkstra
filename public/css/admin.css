@@ -1,3 +1,8 @@
+.active {
+    background: url("/dojotoolkit/dijit/themes/claro/images/activeGradient.png") #CFE5FA repeat-x;
+    color: #243C5F !important;
+}
+
 @font-face {
     font-family: 'ZapfHumnstBTBold';
     src: url('f/zapf_humanist_601_bold_bt-webfont.eot');
@@ -23,9 +28,41 @@
 }
 
 
-.zweicom {
-    background: #bcd5f0 url("/dojotoolkit/dijit/themes/zweicom/images/titleBar.png") repeat-x top left;
+.gamelena {
+    background: #bcd5f0 url("/dojotoolkit/dijit/themes/gamelena/images/titleBar.png") repeat-x top left;
     background-attachment: fixed;
+}
+
+.gamelena .dojoxExpandoTitle {
+         height:16px;
+         font-size:0.9em;
+         font-weight:bold;
+         padding:3px;
+         padding-top:6px;
+         padding-bottom:5px;
+         background:#F0F4FC url("/dojotoolkit/dijit/themes/gamelena/images/tabContainerSprite.gif") repeat-x scroll 0pt -50px;
+         border-left: 1px solid #B1BADF;
+         border-right: 1px solid #B1BADF;
+}
+ 
+.gamelena .dojoxExpandoClosed .dojoxExpandoTitle {
+     background: none;
+     background-color: #F0F4FC;
+     border: none;
+}
+ 
+.gamelena .dojoxExpandoClosed {
+     background: none;
+     background-color: #F0F4FC;
+     border: 1px solid #B1BADF !important;
+}
+ 
+.gamelena .dojoxExpandoIcon {
+     background-image: url('/dojotoolkit//dijit/themes/gamelena/images/spriteRoundedIconsSmall.png');
+}
+ 
+.dj_ie6 .gamelena .dojoxExpandoIcon {
+     background-image: url('/dojotoolkit/dijit/themes/gamelena/images/spriteRoundedIconsSmall.gif');
 }
 
 a {
@@ -76,7 +113,6 @@ a {
 .login input {
     color: #000066;
     font-style: bold;
-    font-family: verdana;
     font-weight: normal;
     font-size: 11px;
     background-color: #f0f8ff
@@ -109,7 +145,6 @@ a {
     font-weight: lighter;
 }
 
-}
 #footer a {
     color: #FFFFFF;
     font-size: 10px;
@@ -134,13 +169,12 @@ input,textarea,select {
     text-align: left;
     font-family: 'resagokrbold', serif;
     float: left;
-    padding-left: 20px;
-    padding-top: 10px;
-    font-size: 28px;
-    color: #EFEFEF;
-    font-weight: bold;
-    text-shadow: 0.2em 0em 1em black, 0.2em 0.1em 0.3em black;
-    filter: progid:DXImageTransform.Microsoft.Shadow(color='gray', Direction=135, Strength=6);
+    padding-left: 18px;
+    padding-top: 7px;
+    font-size: 23px;
+    color: #50A032;
+/*    text-shadow: 0.2em 0em 1em white, 0.2em 0.1em 0.1em white;
+    filter: progid:DXImageTransform.Microsoft.Shadow(color='white', Direction=135, Strength=6);*/
 }
 
 #logosAdm {
@@ -148,6 +182,11 @@ input,textarea,select {
     float: left;
     padding: 0 0 0 14px;
 }
+
+#logosAdm img{
+    height: 34px;
+}
+
 
 #side {
     margin-bottom: 10px;
@@ -313,6 +352,53 @@ form .login {
     
 }
 
+.dijitTreeContainer {
+	width: 100%;
+}
+
+.flat .dijitCheckBox {
+	margin-right: 0.5em;
+}
+
+.flat .dijitVisible {
+	background: #368dbc;
+
+}
+
+.flat ..dojoxMultiSelectItem {
+	padding: 0.2em;
+}
+
+
+.flat .dojoxGrid .dojoxGridCell {
+    padding: 1em !important;
+}
+
+.flat .dojoxExpandoPane .dojoxExpandoWrapper {
+    background-color: #5e6a71;
+    color: #fff;
+}
+
+.flat #infoUsr {
+	color: #fff;
+}
+
+.flat #tituloAdm{
+	color: #fff;
+}
+
+.flat .formSearchItemContainer label {
+    color: #fff;
+}
+
+.flat #contentPaneBottom{
+	color: #fff;
+	font-weight: bold;
+}
+
+.flat .dijitIconFile:before, .flat .dijitLeaf:before {
+	content: initial;
+}
 .popup_title {
     font-weight: bold;
     font-size: 13px;
@@ -326,7 +412,29 @@ a.settingsTab {
     border: 1px solid #769DC0;
     font-size: 12px;
     cursor: pointer;
+    color: #777;
 }
+
+.flat .formSearch .dijitRadio, .flat .formSearch .dijitRadioIcon {
+	border: 1px solid #FFFFFF;
+}
+
+.flat .formSearch .dijitRadio:after,  .flat .formSearch .dijitRadioIcon:after {
+	background: #fff;
+}
+
+.flat a.settingsTab {
+    display: block;
+    float: left;
+    padding: 1em;
+    margin-right: 2px;
+    border: 1px solid #769DC0;
+    font-size: 12px;
+    cursor: pointer;
+    color: #777;
+    font-weight: bold;
+}
+
 
 #black_overlay {
     display: none;
@@ -381,7 +489,7 @@ a.settingsTab {
    font-family: Verdana,Arial,Helvetica,sans-serif;
    font-size: 0.688em;
 }
-	
+    
 
 
 .dojoxGrid table {
@@ -412,7 +520,7 @@ a.settingsTab {
 }
 
 .claro .dijitTabPane, .tundra {
-	background-color: transparent !important; 
+    background-color: transparent !important; 
 }
 
 #formatted {
@@ -478,10 +586,10 @@ a.settingsTab {
     background: url(i/bgmetal-light.png) #F0F0F0;
 }
 
-.zweicom .dijitSplitContainer-dijitContentPane, .zweicom .dijitBorderContainer-dijitContentPane
+.gamelena .dijitSplitContainer-dijitContentPane, .gamelena .dijitBorderContainer-dijitContentPane
 {
-	border-bottom: 1px solid #ccc;
-	background: #bcd5f0 url("/dojotoolkit/dijit/themes/zweicom/images/titleBar.png") repeat-x top left;
+    border-bottom: 1px solid #ccc;
+    background: #bcd5f0 url("/dojotoolkit/dijit/themes/gamelena/images/titleBar.png") repeat-x top left;
 }
 
 .tundra #appToolboxContainer
@@ -494,7 +602,7 @@ a.settingsTab {
     background: #EFEFEF;
 }
 
-#panel_central h2 {
+#mainPane h2 {
     text-align: left;
     padding-left: 10px;
     color: black;
@@ -528,7 +636,7 @@ a.settingsTab {
     margin: -6px 6px 6px -6px; /* Offset the image by certain pixels to reveal the shadow, as the shadows are 6 pixels wide, offset it by that amount to get a perfect shadow */
 }
 
-#panel_central form > table {
+#mainPane form > table {
     border: 1px solid #AAA;
     padding: 10px;  
 }
@@ -572,8 +680,8 @@ a.settingsTab {
 .appLoader div:first-child { font-size: 1.364em; margin: 0 auto; margin-top: 42px; position: absolute; text-align: center; top: 50%; width: 100%; }
 
 
-.zweicom .formSearch {
-    /*background: #007AC9 url("/dojotoolkit/dijit/themes/zweicom/images/titleBar.png") repeat-x top left;*/
+.gamelena .formSearch {
+    /*background: #007AC9 url("/dojotoolkit/dijit/themes/gamelena/images/titleBar.png") repeat-x top left;*/
 }
 
 .formSearch {
@@ -627,23 +735,23 @@ a.settingsTab {
 }
 
 .formSearchItemContainer .item {
-    overflow: hidden;	
-}	
+    overflow: hidden;   
+}   
 
 .dijitTab .tabLabel {
     outline: none;
 }
 
-.zweicom .contentWrapper {
-	
+.gamelena .contentWrapper {
+    
 }
 
 .contentBottom{
-	
+    height: 3em;
 }
-	
+    
 .contentCenter{
-	
+    
 }
 
 .keyPadWrapper {
@@ -656,8 +764,182 @@ a.settingsTab {
     padding: 6px;
 }
 
+/*Patch grid images*/
+.dojoxGridContent {
+    min-height: 100% !important;    
+}
+
 
 /*TinyMCE*/
 .mceIframeContainer {
     background: #fff !important;
+}
+
+
+#eficienciaChart > div {
+    margin: 0 auto;
+}
+
+.dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
+    border-radius: 0.5em;
+    border-color: #5FAFB0;
+}
+
+/*DND*/
+.dndWrapper{
+    height: 24em;
+}
+
+.dndWrapper a:HOVER{
+	text-decoration: underline;
+}
+
+.dndContainer{
+    height: 100%;
+    width: 190px;
+    display: inline-block;
+    margin: 0 auto;
+    float: left;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+.dndContainer h5{
+    text-align: center;
+    font-weight: normal;
+}
+.dndList{
+    height: 80%;
+    overflow: auto;
+    border: solid 1px rgb(210, 210, 210);
+    border-radius: 5px;
+    background-color: #E3EBEC;
+    list-style: none;
+}
+
+.dndList > li{
+    
+
+}
+
+.inStock {
+    list-style-type: disc;
+}
+
+.outStock {
+    color: rgb(125, 125, 125);
+    list-style-type: circle;
+}
+
+.outStock li{
+
+}
+
+.inStock li{
+
+}
+.dojoDndItemOver {
+    background-image: inherited;
+}
+
+
+
+
+.dojoxCheckedMultiSelect .dojoxCheckedMultiSelectWrapper {
+    border-radius: 0.5em;
+    border-color: #5FAFB0;
+}
+
+/*Zwei Theme*/
+
+.zweiIconCsv {
+	background-image:  url('i/csv.png');
+	width: 16px;
+    height: 16px;
+}
+
+
+.zweiIconUpload {
+	background-image:  url('i/upload.png');
+	width: 16px;
+    height: 16px;
+}
+
+.zweiIconDownload {
+	background-image:  url('i/download.png');
+	width: 16px;
+    height: 16px;
+}
+
+.gamelena .dojoxGridHeader .dojoxGridCell, .flat .dojoxGridHeader .dojoxGridCell {
+    padding-top: 1em;
+    padding-bottom: 1em;
+	font-weight: bold;
+}
+
+.flat .dojoxGridHeader .dojoxGridCell {
+    padding-top: 1em;
+    padding-bottom: 1em;
+	font-weight: bold;
+	background: #007AC9;
+	color: #fff;
+}
+form .flat .keyPadWrapper { 
+    background-color: #fff;
+}
+
+.gamelena .dojoxGridCell, .flat .dojoxGridCell {
+	padding-top: 1em;
+	padding-bottom: 1em;
+}
+
+.gamelena .dijitButtonNode {
+	padding-top: 0.4em;
+	padding-bottom: 0.4em;
+}
+
+.gamelena .dijitDialogTitleBar {
+    padding : 0.8em;	
+}
+
+.gamelena  a.settingsTab  {
+	font-weight: bold;
+	padding: 0.5em;
+}
+.gamelena #personalWrapper {
+	top: 0.3em;
+}
+
+.gamelena .dijitMenuItem {
+	font-family: tahoma, arial, helvetica, sans-serif;
+	font-size: 12px;
+	margin: 0;
+	color: #243C5F;
+	font-weight: bold;
+}
+
+.gamelena .settingsArea {
+	overflow: hidden;
+}
+
+.gamelena .dijitDialogCloseIcon {
+	top: 8px;
+}
+
+.gamelena .dijitSelect input, .gamelena .dijitTextBox input {
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+}
+
+.gamelena .dojoxMultiSelectItem {
+	padding: 0.3em;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

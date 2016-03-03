@@ -7,8 +7,9 @@
             <xsd:element name="elements" type="elementsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="searchers" type="searchersType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="forms" type="formsType" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="excel" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="helpers" type="helpersType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="script" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="pane" type="paneType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:choice>
         <xsd:attribute name="target" use="required" type="xsd:normalizedString"/>
         <xsd:attribute name="type" use="required" type="componentTypeType" />
@@ -18,9 +19,12 @@
         <xsd:attribute name="add" type="xsd:boolean"/>
         <xsd:attribute name="delete" type="xsd:boolean"/>
         <xsd:attribute name="clone" type="xsd:boolean"/>
+        <xsd:attribute name="canSort" type="xsd:boolean"/>
         <xsd:attribute name="js" />
+        <xsd:attribute name="jsForm" />
         <xsd:attribute name="style" />
         <xsd:attribute name="plugins" />
+        <xsd:attribute name="containerDojoType" type="containerDojoTypeType" />
         <xsd:attribute name="chartXType" />
         <xsd:attribute name="chartXTarget" />
         <xsd:attribute name="chartXLabel" />
@@ -29,9 +33,13 @@
         <xsd:attribute name="chartItems" />
         <xsd:attribute name="onRowClick" />
         <xsd:attribute name="onRowDblClick" />
+        <xsd:attribute name="onFetchComplete" />
+        <xsd:attribute name="onShow" />
         <xsd:attribute name="cols" />
         <xsd:attribute name="titles" />
         <xsd:attribute name="items" />
+        <xsd:attribute name="itemsDescription" />
+        <xsd:attribute name="aclComponent" />
         <xsd:attribute name="serverPagination" type="xsd:boolean" />
         <xsd:attribute name="inheritsData" type="xsd:boolean" />
         <xsd:attribute name="chartDojoType" type="chartDojoTypeType" />
@@ -42,12 +50,17 @@
             <xsd:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
         <xsd:attribute name="name" />
+        <xsd:attribute name="style" />
     </xsd:complexType>
     <xsd:complexType name="searchersType">
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
-            <xsd:element name="element" type="elementType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="element" type="elementType" minOccurs="1" maxOccurs="unbounded"/>
             <xsd:element name="group" type="groupType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="helpers" type="helpersType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="onSubmit" minOccurs="0" maxOccurs="1"/>
         </xsd:choice>
+        <xsd:attribute name="hideSubmit" type="xsd:boolean"/>
+        <xsd:attribute name="outsideContent" type="xsd:boolean"/>
     </xsd:complexType>
     <xsd:complexType name="formsType">
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
@@ -56,9 +69,11 @@
             <xsd:element name="add" type="formType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="onPostSubmit" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="onSubmit" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="onShow" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="tabs" type="tabsType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="helpers" type="helpersType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:choice>
-        <xsd:attribute name="ajax" />
+        <xsd:attribute name="ajax" type="xsd:boolean" />
         <xsd:attribute name="style"/>
         <xsd:attribute name="onload"/>
         <xsd:attribute name="onshow"/>
@@ -71,6 +86,7 @@
             <xsd:element name="tabs" type="tabsType" minOccurs="0" maxOccurs="unbounded"/>
             <xsd:element name="onPostSubmit" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="onSubmit" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="helpers" type="helpersType" minOccurs="0" maxOccurs="1"/>
         </xsd:choice>
         <xsd:attribute name="ajax" />
         <xsd:attribute name="style"/>
@@ -79,15 +95,38 @@
         <xsd:attribute name="onhide"/>
     </xsd:complexType>
     <xsd:complexType name="helpersType">
-        <xsd:sequence>
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
             <xsd:element name="dialog" type="formsType" minOccurs="0" maxOccurs="unbounded"/>
-            <xsd:element name="customFunction" type="elementType" minOccurs="0" maxOccurs="unbounded"/>
-        </xsd:sequence>
+            <xsd:element name="customFunction" type="customFunctionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="excel" type="excelType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="uploader" type="uploaderType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+    <xsd:complexType name="PaneType">
+        <xsd:attribute name="onshow"/>
+        <xsd:attribute name="onhide"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+        <xsd:attribute name="name"/>
+        <xsd:attribute name="href" />
     </xsd:complexType>
     <xsd:complexType name="tabsType">
         <xsd:sequence>
-            <xsd:element name="tab" type="elementsType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="tab" type="tabType" minOccurs="1" maxOccurs="unbounded"/>
         </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="tabType">
+        <xsd:sequence>
+            <xsd:element name="element" type="elementType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="helpers" type="helpersType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" />
+        <xsd:attribute name="onClick" />
+        <xsd:attribute name="onShow" />
+        <xsd:attribute name="onDownloadStart" />
+        <xsd:attribute name="onDownloadEnd" />
+        <xsd:attribute name="onDownloadError" />
+        <xsd:attribute name="dojoType" />
+        <xsd:attribute name="style" />
     </xsd:complexType>
     <xsd:complexType name="groupType">
         <xsd:sequence>
@@ -95,30 +134,58 @@
         </xsd:sequence>
         <xsd:attribute name="name" />
         <xsd:attribute name="type" type="elementTypeType"/>
-        <xsd:attribute name="visible" />
-        <xsd:attribute name="edit" />
-        <xsd:attribute name="add" />
-        <xsd:attribute name="clone" />
+        <xsd:attribute name="visible" type="xsd:boolean" />
+        <xsd:attribute name="edit" type="editType" />
+        <xsd:attribute name="add" type="editType" />
+        <xsd:attribute name="clone" type="editType" />
         <xsd:attribute name="password" />
         <xsd:attribute name="defaultValue" />
         <xsd:attribute name="defaultText" />
         <xsd:attribute name="field" />
-        <xsd:attribute name="required" />
-        <xsd:attribute name="disabled" />
-        <xsd:attribute name="readonly" />
+        <xsd:attribute name="required" type="xsd:boolean" />
+        <xsd:attribute name="disabled" type="xsd:boolean" />
+        <xsd:attribute name="readonly" type="xsd:boolean" />
         <xsd:attribute name="regExp"/>
-        <xsd:attribute name="trim"/>
+        <xsd:attribute name="trim" type="xsd:boolean"/>
         <xsd:attribute name="table"/>
         <xsd:attribute name="tableField"/>
         <xsd:attribute name="tablePk"/>
         <xsd:attribute name="tableMethod"/>
         <xsd:attribute name="invalidMessage"/>
+        <xsd:attribute name="missingMessage"/>
         <xsd:attribute name="promptMessage"/>
         <xsd:attribute name="list"/>
         <xsd:attribute name="formatter"/>
         <xsd:attribute name="maxlength"/>
         <xsd:attribute name="width"/>
         <xsd:attribute name="operator" type="operatorType"/>
+    </xsd:complexType>
+    <xsd:complexType name="customFunctionType">
+        <xsd:attribute name="target"/>
+        <xsd:attribute name="onclick"/>
+        <xsd:attribute name="name"/>
+        <xsd:attribute name="iconClass"/>
+        <xsd:attribute name="aclAction"/>
+        <xsd:attribute name="title"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+    </xsd:complexType>
+    <xsd:complexType name="excelType">
+        <xsd:attribute name="name"/>
+        <xsd:attribute name="title"/>
+        <xsd:attribute name="formatter" type="excelFormatter"/>
+        <xsd:attribute name="iconClass"/>
+        <xsd:attribute name="disabled" type="xsd:boolean"/>
+    </xsd:complexType>
+    <xsd:complexType name="uploaderType">
+        <xsd:attribute name="name"/>
+        <xsd:attribute name="url"/>
+        <xsd:attribute name="title"/>
+        <xsd:attribute name="path"/>
+        <xsd:attribute name="iconClass"/>
+        <xsd:attribute name="action" type="uploaderActionType"/>
+        <xsd:attribute name="processClass"/><!-- @todo por implementar -->
+        <xsd:attribute name="processMethod"/><!-- @todo por implementar -->
+        <xsd:attribute name="truncate" type="xsd:boolean" />
     </xsd:complexType>
     <xsd:complexType name="elementType">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -129,22 +196,34 @@
         <xsd:attribute name="type" type="elementTypeType"/>
         <xsd:attribute name="style" />
         <xsd:attribute name="name" />
-        <xsd:attribute name="visible" />
-        <xsd:attribute name="edit" />
-        <xsd:attribute name="add" />
-        <xsd:attribute name="clone" />
+        <xsd:attribute name="visible" type="xsd:boolean" />
+        <xsd:attribute name="edit" type="editType" />
+        <xsd:attribute name="add" type="editType" />
+        <xsd:attribute name="clone" type="editType" />
+        <xsd:attribute name="value" />
         <xsd:attribute name="defaultValue" />
         <xsd:attribute name="uncheckedValue" />
-        <xsd:attribute name="defaultText" />
+        <xsd:attribute name="selectedTitle" type="xsd:string"/>
+        <xsd:attribute name="unselectedTitle" type="xsd:string" />
+        <xsd:attribute name="defaultText" type="xsd:string" />
         <xsd:attribute name="field" />
         <xsd:attribute name="onchange" />
+        <xsd:attribute name="disabled" type="xsd:boolean" />
         <xsd:attribute name="onclick" />
+        <xsd:attribute name="onkeypress" />
+        <xsd:attribute name="onkeyup" />
         <xsd:attribute name="onblur" />
         <xsd:attribute name="onload" />
-        <xsd:attribute name="required" />
+        <xsd:attribute name="minimum" type="xsd:integer" />
+        <xsd:attribute name="maximum" type="xsd:integer" />
+        <xsd:attribute name="required" type="xsd:boolean" />
+        <xsd:attribute name="autocomplete" type="onOffType" />
+        <xsd:attribute name="autocorrect" type="onOffType" />
+        <xsd:attribute name="autocapitalize" type="onOffType" />
+        <xsd:attribute name="spellcheck" type="xsd:boolean" />
         <xsd:attribute name="regExp"/>
         <xsd:attribute name="trim"/>
-        <xsd:attribute name="url"/>
+        <xsd:attribute name="url" type="xsd:anyURI"/>
         <xsd:attribute name="path"/>
         <xsd:attribute name="table"/>
         <xsd:attribute name="tableField"/>
@@ -153,32 +232,64 @@
         <xsd:attribute name="invalidMessage"/>
         <xsd:attribute name="promptMessage"/>
         <xsd:attribute name="list"/>
+        <xsd:attribute name="data"/>
         <xsd:attribute name="formatter"/>
-        <xsd:attribute name="maxlength"/>
+        <xsd:attribute name="maxlength" type="xsd:integer"/>
         <xsd:attribute name="width"/>
-        <xsd:attribute name="checked"/>
+        <xsd:attribute name="checked" type="xsd:boolean"/>
         <xsd:attribute name="sufix"/>
         <xsd:attribute name="prefix"/>
         <xsd:attribute name="tinyMceTemplate" />
         <xsd:attribute name="placeHolder" />
         <xsd:attribute name="operator" type="operatorType"/>
+        <xsd:attribute name="aclAction" type="xsd:string"/>
+        <xsd:attribute name="unbounded" type="xsd:boolean"/>
     </xsd:complexType>
     <xsd:complexType name="thumbType">
         <xsd:attribute name="width" />
         <xsd:attribute name="height" />
         <xsd:attribute name="path"/>
     </xsd:complexType>
+    <xsd:simpleType name="onOffType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="on"/>
+            <xsd:enumeration value="off"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="editType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+            <xsd:enumeration value="readonly"/>
+            <xsd:enumeration value="disabled"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="uploaderActionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="load"/>
+            <xsd:enumeration value="insert"/>
+            <xsd:enumeration value="delete"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="excelFormatter">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Excel5"/>
+            <xsd:enumeration value="Excel2007"/>
+            <xsd:enumeration value="csv"/>
+            <xsd:enumeration value="html"/>
+        </xsd:restriction>
+    </xsd:simpleType>
     <xsd:simpleType name="operatorType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="like"/>
             <xsd:enumeration value="between"/>
             <xsd:enumeration value="="/>
             <xsd:enumeration value="!="/>
-            <xsd:enumeration value="&lt;&gt;"/>
-            <xsd:enumeration value="&gt;"/>
-            <xsd:enumeration value="&lt;"/>
-            <xsd:enumeration value="&gt;="/>
-            <xsd:enumeration value="&lt;="/>
+            <xsd:enumeration value="&amp;gt;&amp;lt;"/>
+            <xsd:enumeration value="&amp;gt;"/>
+            <xsd:enumeration value="&amp;lt;"/>
+            <xsd:enumeration value="&#38;gt;="/>
+            <xsd:enumeration value="&#38;lt;="/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="componentTypeType">
@@ -193,19 +304,24 @@
     <xsd:simpleType name="elementTypeType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="dijit-form-check-box"/>
-            <xsd:enumeration value="dijit-form-combo-box"/>
-            <xsd:enumeration value="dijit-form-filtering-select"/>
-            <xsd:enumeration value="dijit-form-textarea"/>
-            <xsd:enumeration value="dijit-form-validation-text-box"/>
-            <xsd:enumeration value="dijit-form-date-text-box"/>
             <xsd:enumeration value="dojox-form-checked-multi-select"/>
+            <xsd:enumeration value="dojox-form-checked-multi-select-binary"/>
+            <xsd:enumeration value="dijit-form-combo-box"/>
+            <xsd:enumeration value="dijit-form-date-text-box"/>
+            <xsd:enumeration value="dijit-form-filtering-select"/>
+            <xsd:enumeration value="dijit-form-horizontal-slider"/>
+            <xsd:enumeration value="dijit-form-select"/>
+            <xsd:enumeration value="dijit-form-textarea"/>
+            <xsd:enumeration value="dijit-form-time-text-box"/>
+            <xsd:enumeration value="dijit-form-validation-text-box"/>
             <xsd:enumeration value="dojox-form-uploader"/>
+            <xsd:enumeration value="dojox-widget-color-picker"/>
+            <xsd:enumeration value="dojo-dnd-source"/>
             <xsd:enumeration value="hidden"/>
             <xsd:enumeration value="list-files"/>
             <xsd:enumeration value="tiny-mce"/>
+            <xsd:enumeration value="zwei-form-filtering-json-select"/>
             <xsd:enumeration value="zwei-form-validation-textarea"/>
-            <xsd:enumeration value="pk-original"/>
-            <xsd:enumeration value="id-box"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="chartDojoTypeType">
@@ -270,6 +386,13 @@
             <xsd:enumeration value="Tufte"/>
             <xsd:enumeration value="WatersEdge"/>
             <xsd:enumeration value="Wetland"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="containerDojoTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="dijit/layout/BorderContainer"/>
+            <xsd:enumeration value="dijit/layout/AccordionContainer"/>
+            <xsd:enumeration value="dijit/layout/TabContainer"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

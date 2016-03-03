@@ -1,7 +1,6 @@
 {
 	"name": "gamelena/dijkstra",
-	"description": "dijkstra",
-	"description": "Administrador Dijkstra",
+	"description": "Interfaz gráfica para caminos dijkstra",
 	"license": "GPL2",
 	"authors": [
 		{
@@ -15,7 +14,7 @@
 		}
 	],
 	"require-dev": {
-		"gamelena/tangerine": "dev-master"
+		"gamelena/tangerine": "dev-develop"
 	},
 	"minimum-stability": "dev"
 }

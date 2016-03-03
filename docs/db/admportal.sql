@@ -1,18 +1,20 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.5
+-- version 4.0.10deb1
 -- http://www.phpmyadmin.net
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 16-04-2014 a las 18:14:38
--- Versión del servidor: 5.5.35-0ubuntu0.12.10.2
--- Versión de PHP: 5.4.21
+-- Servidor: localhost
+-- Tiempo de generación: 03-03-2016 a las 01:41:42
+-- Versión del servidor: 5.5.47-0ubuntu0.14.04.1
+-- Versión de PHP: 5.5.9-1ubuntu4.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 --
--- Base de datos: `suscripciones`
+-- Base de datos: `dijkstra`
 --
+CREATE DATABASE IF NOT EXISTS `dijkstra` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `dijkstra`;
 
 -- --------------------------------------------------------
 
@@ -91,28 +93,27 @@ CREATE TABLE IF NOT EXISTS `acl_modules` (
   `ownership` enum('0','1') NOT NULL DEFAULT '0' COMMENT 'Indica si modulo usa modelo con reglas de owner, funciona con type=xml, ver Zwei_Db_Table::isOwner(item, user)',
   `icons_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `module` (`module`, `type`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+  UNIQUE KEY `module` (`module`,`type`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
 --
 -- Volcado de datos para la tabla `acl_modules`
 --
 
-INSERT INTO `acl_modules` (`id`, `parent_id`, `title`, `module`, `tree`, `type`, `approved`, `refresh_on_load`, `order`, `root`, `icons_id`, `ownership`) VALUES
-(9, 1, 'Configuraci&oacute;n del Sitio', 'settings.xml', '1', 'xml', '1', '0', 0, '1', 1, '0'),
-(8, 1, 'Perfiles', 'roles.xml', '1', 'xml', '1', '0', 0, '1', 1, '0'),
-(7, 1, 'Servidor', 'phpinfo.xml', '1', 'xml', '1', '0', 0, '1', 1, '0'),
-(5, 1, 'Usuarios', 'users.xml', '1', 'xml', '1', '0', 0, '0', 6, '0'),
-(4, 1, 'M&oacute;dulos', 'modules.xml', '1', 'xml', '1', '0', 7, '1', 3, '0'),
-(3, NULL, 'Datos Personales', 'personal-info.xml', '0', 'xml', '1', '0', 0, '0', 6, '0'),
-(2, NULL, 'Caminos', 'paths.xml', '1', 'xml', '1', '0', 0, '0', 1, '0'),
-(1, NULL, 'Configuraci&oacute;n', NULL, '1', 'xml', '1', '0', 11, '0', 5, '0'),
-(10, 1, '&Iacute;conos', 'icons.xml', '1', 'xml', '0', '0', 0, '1', 7, '0'),
-(12, 2, 'Nodos', 'nodes.xml', '0', 'xml', '1', '0', 0, '0', 0, '0'),
-(13, 2, 'Enlaces', 'links.xml', '0', 'xml', '1', '0', 0, '0', 0, '0'),
-(14, NULL, 'Matriz de Adyacencia', 'adjacency-matrix', '1', 'zend_module', '1', '0', 3, '0', 8, '0'),
-(15, NULL, 'Presentaci&oacute;n', '/presentation', '1', 'iframe', '1', '0', 2, '0', 8, '0');
-
+INSERT INTO `acl_modules` (`id`, `parent_id`, `title`, `module`, `tree`, `refresh_on_load`, `type`, `approved`, `order`, `root`, `ownership`, `icons_id`) VALUES
+(1, NULL, 'Configuraci&oacute;n', NULL, '1', '0', 'xml', '1', 11, '0', '0', 5),
+(2, NULL, 'Caminos', 'paths.xml', '1', '0', 'xml', '1', 0, '0', '0', 1),
+(3, NULL, 'Datos Personales', 'personal-info.xml', '0', '0', 'xml', '1', 0, '0', '0', 6),
+(4, 1, 'M&oacute;dulos', 'modules.xml', '1', '0', 'xml', '1', 7, '1', '0', 3),
+(5, 1, 'Usuarios', 'users.xml', '1', '0', 'xml', '1', 0, '0', '0', 6),
+(7, 1, 'Servidor', 'phpinfo.xml', '1', '0', 'xml', '1', 0, '1', '0', 1),
+(8, 1, 'Perfiles', 'roles.xml', '1', '0', 'xml', '1', 0, '1', '0', 1),
+(9, 1, 'Configuraci&oacute;n del Sitio', 'settings.xml', '1', '0', 'xml', '1', 0, '1', '0', 1),
+(10, 1, '&Iacute;conos', 'icons.xml', '1', '0', 'xml', '1', 10, '1', '0', 7),
+(12, 2, 'Nodos', 'nodes.xml', '0', '0', 'xml', '1', 0, '0', '0', 0),
+(13, 2, 'Enlaces', 'links.xml', '0', '0', 'xml', '1', 0, '0', '0', 0),
+(14, NULL, 'Matriz de Adyacencia', 'adjacency-matrix', '1', '0', 'zend_module', '1', 3, '0', '0', 8),
+(15, NULL, 'Presentaci&oacute;n', 'presentation', '1', '0', 'iframe', '1', 2, '0', '0', 8);
 
 -- --------------------------------------------------------
 
@@ -127,11 +128,17 @@ CREATE TABLE IF NOT EXISTS `acl_modules_actions` (
   `acl_actions_id` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `acl_modules_id` (`acl_modules_id`,`acl_actions_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=326 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=337 ;
 
+--
+-- Volcado de datos para la tabla `acl_modules_actions`
+--
 
 INSERT INTO `acl_modules_actions` (`id`, `acl_modules_id`, `acl_actions_id`) VALUES
 (168, 1, 'LIST'),
+(333, 2, 'ADD'),
+(334, 2, 'DELETE'),
+(335, 2, 'EDIT'),
 (188, 2, 'LIST'),
 (62, 3, 'EDIT'),
 (63, 3, 'LIST'),
@@ -150,6 +157,9 @@ INSERT INTO `acl_modules_actions` (`id`, `acl_modules_id`, `acl_actions_id`) VAL
 (262, 8, 'LIST'),
 (301, 9, 'EDIT'),
 (205, 9, 'LIST'),
+(329, 10, 'ADD'),
+(330, 10, 'DELETE'),
+(331, 10, 'EDIT'),
 (267, 10, 'LIST'),
 (268, 11, 'LIST'),
 (285, 12, 'ADD'),
@@ -160,6 +170,8 @@ INSERT INTO `acl_modules_actions` (`id`, `acl_modules_id`, `acl_actions_id`) VAL
 (290, 13, 'DELETE'),
 (291, 13, 'EDIT'),
 (292, 13, 'LIST');
+
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `acl_roles`
@@ -176,10 +188,16 @@ CREATE TABLE IF NOT EXISTS `acl_roles` (
   UNIQUE KEY `role_name` (`role_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
+--
+-- Volcado de datos para la tabla `acl_roles`
+--
+
 INSERT INTO `acl_roles` (`id`, `role_name`, `description`, `approved`, `must_refresh`) VALUES
 (1, 'Soporte', 'Perfil root.', '1', '0'),
 (2, 'Administrador', 'Administrador con acceso a hacer modificaciones administrativas y manejo de usuarios.', '1', '0'),
 (3, 'Consultas', 'Acceso a listados y reportes.', '1', '0');
+
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `acl_roles_modules_actions`
@@ -193,7 +211,12 @@ CREATE TABLE IF NOT EXISTS `acl_roles_modules_actions` (
   `permission` enum('ALLOW','DENY') CHARACTER SET utf8 NOT NULL DEFAULT 'ALLOW',
   PRIMARY KEY (`id`),
   UNIQUE KEY `acl_roles_id` (`acl_roles_id`,`acl_modules_actions_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=156 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=223 ;
+
+--
+-- Volcado de datos para la tabla `acl_roles_modules_actions`
+--
+
 INSERT INTO `acl_roles_modules_actions` (`id`, `acl_roles_id`, `acl_modules_actions_id`, `permission`) VALUES
 (1, 2, 168, 'ALLOW'),
 (3, 2, 188, 'ALLOW'),
@@ -212,7 +235,6 @@ INSERT INTO `acl_roles_modules_actions` (`id`, `acl_roles_id`, `acl_modules_acti
 (35, 1, 173, 'ALLOW'),
 (36, 1, 174, 'ALLOW'),
 (37, 1, 187, 'ALLOW'),
-(38, 1, 204, 'ALLOW'),
 (39, 1, 205, 'ALLOW'),
 (44, 1, 162, 'ALLOW'),
 (45, 1, 163, 'ALLOW'),
@@ -239,21 +261,29 @@ INSERT INTO `acl_roles_modules_actions` (`id`, `acl_roles_id`, `acl_modules_acti
 (145, 1, 285, 'ALLOW'),
 (146, 1, 286, 'ALLOW'),
 (147, 1, 287, 'ALLOW'),
-(148, 1, 288, 'ALLOW');
+(148, 1, 288, 'ALLOW'),
+(161, 1, 329, 'ALLOW'),
+(162, 1, 330, 'ALLOW'),
+(163, 1, 331, 'ALLOW'),
+(164, 1, 301, 'ALLOW'),
+(191, 1, 333, 'ALLOW'),
+(192, 1, 334, 'ALLOW'),
+(193, 1, 335, 'ALLOW');
 
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `acl_session`
--- 
+--
 
 DROP TABLE IF EXISTS `acl_session`;
 CREATE TABLE IF NOT EXISTS `acl_session` (
   `id` char(32) NOT NULL DEFAULT '0',
   `acl_users_id` int(10) DEFAULT NULL,
   `acl_roles_id` int(10) DEFAULT NULL,
-  `created` int(10) UNSIGNED DEFAULT NULL,
-  `modified` int(10) UNSIGNED DEFAULT NULL,
-  `lifetime` int(10)  UNSIGNED DEFAULT NULL,
+  `created` int(10) unsigned DEFAULT NULL,
+  `modified` int(10) unsigned DEFAULT NULL,
+  `lifetime` int(10) unsigned DEFAULT NULL,
   `data` text,
   `ip` varchar(20) DEFAULT NULL,
   `user_agent` varchar(255) DEFAULT NULL,
@@ -261,6 +291,14 @@ CREATE TABLE IF NOT EXISTS `acl_session` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Volcado de datos para la tabla `acl_session`
+--
+
+INSERT INTO `acl_session` (`id`, `acl_users_id`, `acl_roles_id`, `created`, `modified`, `lifetime`, `data`, `ip`, `user_agent`, `must_refresh`) VALUES
+('ad1ho551rprmf8fm6jir8dr733', 1, 1, 1456979187, 1456980098, 1440, 'Zend_Auth|a:3:{s:7:"timeout";i:1456982232;s:10:"requestUri";s:80:"//components/nodes-graph/paths-dialog?paths_id=9&dojo.preventCache=1456979832559";s:7:"storage";O:8:"stdClass":11:{s:2:"id";s:1:"1";s:12:"acl_roles_id";s:1:"1";s:9:"user_name";s:8:"gamelena";s:11:"first_names";s:7:"Soporte";s:10:"last_names";s:8:"gamelena";s:5:"email";s:21:"tecnicos@gamelena.com";s:8:"approved";s:1:"1";s:4:"foto";N;s:12:"must_refresh";s:1:"0";s:16:"sessionNamespace";s:18:"dijkstra-tangerine";s:6:"groups";a:0:{}}}', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36 FirePHP/4Chrome', '0');
+
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `acl_users`
@@ -282,12 +320,16 @@ CREATE TABLE IF NOT EXISTS `acl_users` (
   UNIQUE KEY `user_name` (`user_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
+--
+-- Volcado de datos para la tabla `acl_users`
+--
 
 INSERT INTO `acl_users` (`id`, `acl_roles_id`, `user_name`, `password`, `first_names`, `last_names`, `email`, `approved`, `foto`, `must_refresh`) VALUES
 (1, 1, 'gamelena', '3a62dc577a0db23fb0b5c1c9e8046c05', 'Soporte', 'gamelena', 'tecnicos@gamelena.com', '1', NULL, '0'),
-(2, 2, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'Administrador', 'Cliente', 'administrador@telefonicamoviles.com.pe', '1', NULL, '0'),
+(2, 2, 'invitado', 'a6ae8a143d440ab8c006d799f682d48d', 'Administrador', 'Cliente', '', '1', NULL, '0'),
 (3, 3, 'consultas', '83da1fbc8f1a993de3f31cec6d7bf5b2', 'Consultas', 'Cliente', '', '1', NULL, '0');
 
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `acl_users_groups`
@@ -325,7 +367,14 @@ CREATE TABLE IF NOT EXISTS `log_book` (
 
 -- --------------------------------------------------------
 
-
+--
+-- Estructura Stand-in para la vista `tables_logged`
+--
+DROP VIEW IF EXISTS `tables_logged`;
+CREATE TABLE IF NOT EXISTS `tables_logged` (
+`id` char(40)
+,`title` char(40)
+);
 -- --------------------------------------------------------
 
 --
@@ -338,25 +387,28 @@ CREATE TABLE IF NOT EXISTS `web_icons` (
   `title` varchar(50) NOT NULL,
   `image` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=25 ;
+
+--
+-- Volcado de datos para la tabla `web_icons`
+--
 
 INSERT INTO `web_icons` (`id`, `title`, `image`) VALUES
-(1, 'Sphere Green', '033d4c25green-sphere.png'),
-(2, 'Sphere Blue', '225ca2a1step4c.png'),
-(3, 'Sphere Red', '23cf88ccred-sphere-2.png'),
-(4, 'Sphere Yellow', 'dedbeb01yellow-sphere.png'),
-(5, 'Keys', 'a3093747roles.png'),
-(6, 'Module', '03e490e9blockdevice.png'),
-(7, 'Roles', '547353feuser-group-icon.png'),
-(8, 'Teams', '630e0daesocial-networking-package.jpg'),
-(9, 'Online', 'ab789f0auser-online.png'),
-(10, 'Chart', '325d3cbfarea-chart-256.png'),
-(11, 'Magnifier', '905dbb5bwindows-7-magnifier.png'),
-(12, 'Settings', 'e0d79f05setting-icon.png'),
-(13, 'Settings 2', '91732629iphone-settings-icon.png'),
-(14, 'Audit', '751f9170audit.png'),
+(1, 'Sphere Green', '23c16c7cgreen-sphere.png'),
+(2, 'Sphere Blue', '0b402132step4c.png'),
+(3, 'Sphere Red', 'fff2f50cred-sphere-2.png'),
+(4, 'Sphere Yellow', 'c0f2aa3ayellow-sphere.png'),
+(5, 'Keys', '461a6088roles.png'),
+(6, 'Module', 'a523db9cblockdevice.png'),
+(7, 'Roles', '136ad849social-networking-package.jpg'),
+(8, 'Teams', '51197ecdsort-groups-by-128.png'),
+(9, 'Online', '5b47cf39user-icon.png'),
+(10, 'Chart', 'f051dc42chart-down.png'),
+(11, 'Magnifier', '8a44638aleaf-grey.png'),
+(12, 'Settings', '99c5d37aiphone-settings-icon.png'),
+(13, 'Settings 2', '3a8b8cd1setting-icon.png'),
+(14, 'Audit', 'e288f792pass-icon.png'),
 (15, 'Setup', '0d7df408setup-l.png'),
-(16, 'USSD', 'c62b4507bitdefender-ussd-wipe-stopper.png'),
 (17, 'User', 'a4c40f07actions-im-user-icon.png'),
 (18, 'Package', 'c244255a50px-crystal-package.png'),
 (19, 'Sale', '8a6ca637activshow-icon.png'),
@@ -366,6 +418,7 @@ INSERT INTO `web_icons` (`id`, `title`, `image`) VALUES
 (23, 'Reporte', '7612a7b7reports.png'),
 (24, 'CSV', 'ad4c5a07csv.png');
 
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `web_settings`
@@ -393,21 +446,23 @@ CREATE TABLE IF NOT EXISTS `web_settings` (
   KEY `group` (`group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Volcado de datos para la tabla `web_settings`
+--
 
 INSERT INTO `web_settings` (`id`, `list`, `value`, `type`, `description`, `ord`, `group`, `function`, `approved`, `path`, `url`, `regExp`, `invalidMessage`, `promptMessage`, `formatter`, `xml_children`) VALUES
 ('credits', '', '&copy; gamelena 2015', 'dijit-form-validation-text-box', '', 2, 'Admin', '', '1', '', NULL, '', '', '', '', ''),
 ('query_log', '', '1', 'dijit-form-check-box', '', 1, 'Debug', '', '1', '', NULL, '', '', '', '', ''),
 ('titulo_adm', '', 'Dijkstra', 'dijit-form-validation-text-box', '', 1, 'Admin', '', '1', '', NULL, '', '', '', '', ''),
 ('transactions_log', '', '1', 'dijit-form-check-box', '', 1, 'Debug', '', '1', '', NULL, '', '', '', '', ''),
-('url_logo_oper', '', 'b07d49fdlogo-gamelena-big.png', 'dojox-form-uploader', '', 3, 'Admin', '', '1', '{ROOT_DIR}/public/upfiles/', '{BASE_URL}/upfiles/corporative/', '', '', '', 'formatImage', '&lt;thumb height="56" path="{ROOT_DIR}/public/upfiles/corporative/" /&gt;'),
-('url_logo_gamelena', '', 'b28576bblogo-gamelena-26x34.png', 'dojox-form-uploader', '', 3, 'Admin', '', '1', '{ROOT_DIR}/public/upfiles/', '{BASE_URL}/upfiles/corporative/', '', '', '', 'formatImage', '&lt;thumb height="18" path="{ROOT_DIR}/public/upfiles/corporative/" /&gt;\r\n');
+('url_logo_gamelena', '', '9446c2dbgenesis.png', 'dojox-form-uploader', '', 3, 'Admin', '', '1', '{ROOT_DIR}/public/upfiles/', '{BASE_URL}/upfiles/corporative/', '', '', '', 'formatImage', '&lt;thumb height="18" path="{ROOT_DIR}/public/upfiles/corporative/" /&gt;\r\n'),
+('url_logo_oper', '', '4729223agenesis.png', 'dojox-form-uploader', '', 3, 'Admin', '', '1', '{ROOT_DIR}/public/upfiles/', '{BASE_URL}/upfiles/corporative/', '', '', '', 'formatImage', '&lt;thumb height="56" path="{ROOT_DIR}/public/upfiles/corporative/" /&gt;');
+
+-- --------------------------------------------------------
 
 --
 -- Estructura para la vista `tables_logged`
 --
 DROP TABLE IF EXISTS `tables_logged`;
-DROP VIEW IF EXISTS `tables_logged`;
-CREATE VIEW `tables_logged` AS select distinct `log_book`.`table` AS `id`,`log_book`.`table` AS `title` from `log_book` order by `log_book`.`table`;
 
-
-
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `tables_logged` AS select distinct `log_book`.`table` AS `id`,`log_book`.`table` AS `title` from `log_book` order by `log_book`.`table`;

@@ -62,6 +62,10 @@
 	<target name="alias" description="Create An Apache Alias for this site">
 		<exec dir="${basedir}/tasks" executable="./alias.sh" failonerror="true"/>
 	</target>
+	
+	<target name="vhost" description="Create A Vhost for this site">
+		<exec dir="${basedir}/tasks" executable="./vhost.sh" failonerror="true"/>
+	</target>
 
 
 	<target name="clean" unless="clean.done" description="Cleanup build artifacts">

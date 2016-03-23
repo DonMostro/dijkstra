@@ -63,6 +63,18 @@
 		<exec dir="${basedir}/tasks" executable="./alias.sh" failonerror="true"/>
 	</target>
 	
+
+	<target name="tangerine-alias" description="Create An Apache Alias for this site">
+		<exec dir="${basedir}/vendor/gamelena/tangerine" executable="ant" failonerror="true">
+			<arg value="alias"/>
+		</exec>
+	</target>
+	<target name="tangerine-bower" description="Create An Apache Alias for this site">
+		<exec dir="${basedir}/vendor/gamelena/tangerine" executable="ant" failonerror="true">
+			<arg value="bower"/>
+		</exec>
+	</target>
+	
 	<target name="vhost" description="Create A Vhost for this site">
 		<exec dir="${basedir}/tasks" executable="./vhost.sh" failonerror="true"/>
 	</target>

@@ -10,7 +10,7 @@
 	"repositories": [
 		{
 			"type": "git",
-			"url": "https://github.com/DonMostro/tangerine.git"
+			"url": "https://github.com/Gamelena/tangerine.git"
 		}
 	],
 	"require-dev": {

@@ -2,10 +2,10 @@ if [ "$(id -u)" != "0" ]; then
 	echo "This script must be run as root or sudo" 1>&2
 	exit 1
 else
-	cd ../..
+	cd ..
 	SITENAME=`echo "${PWD##*/}"`
 	cd - 
-	ROOT_DIR="../"
+	ROOT_DIR=""
 	SITEPATH=`echo $(dirname $(readlink -e $PWD))`
 	echo "Creando alias basados en $SITEPATH"
 

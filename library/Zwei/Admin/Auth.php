@@ -3,16 +3,15 @@
  * Valida sesión por admin web, evitando colisiones de sesión entre diferentes admin mediante flag
  * Zend_Auth::getInstance()->getStorage()->read()->sessionNamespace
  * 
- * @category   Zwei
- * @package    Zwei_Admin
- * @author rodrigo.riquelme@zweicom.com
- *
+ * @category Zwei
+ * @package  Zwei_Admin
+ * @author   rodrigo.riquelme@gamelena.com
  */
 
 class Zwei_Admin_Auth
 {
      /**
-     * Singleton instance
+     * Instancia singleton.
      *
      * @var Zwei_Admin_Auth
      */
@@ -24,20 +23,21 @@ class Zwei_Admin_Auth
      * @return void
      */
     protected function __construct()
-    {}
-    
+    {
+    }
+
     /**
      * Singleton pattern implementation makes "clone" unavailable
      *
      * @return void
      */
     protected function __clone()
-    {}
-    
+    {
+    }
+
     /**
-     * Returns an instance of Zwei_Admin_Auth
-     *
-     * Singleton pattern implementation
+     * Retorna instancia de Zwei_Admin_Auth.
+     * Implementación de patrón singleton.
      *
      * @return Zwei_Admin_Auth Provides a fluent interface
      */
@@ -51,56 +51,65 @@ class Zwei_Admin_Auth
     }
     
     /**
-     * Verifying if exists an instance with identity of Zend_Auth 
+     * Verifica instancia con identitad de Zend_Auth.
+     * 
      * @return boolean
      */
     public function hasIdentity()
     {
-        $auth = Zend_Auth::getInstance();
-        
-        if (!$auth->hasIdentity()) {
+        if (!Zend_Auth::getInstance()->hasIdentity()) {
+            $aclUsersModel = new DbTable_AclUsers();
             
+            $username = 'invitado';
+            /**
+             * 
+             * @var Zend_Db_Table_Rowset $rowset
+             */
+            $rowset = $aclUsersModel->findByUserName($username);
+            $userInfo = $rowset->current();
+            
+            $auth = Zend_Auth::getInstance();
             $authAdapter = self::getAuthAdapter();
-            $authAdapter->setIdentity('invitado')
-            ->setCredential('invitado');
             
-            $result = $auth->authenticate($authAdapter);
-            if ($result->isValid())
-            {
+            $authAdapter->setIdentity($username)
+                ->setCredential($username);
+                $result = $auth->authenticate($authAdapter);
+            
+            if ($result->isValid()) {
                 // Obtener toda la info de usuario, excepto la password
-                $userInfo = $authAdapter->getResultRowObject(null, 'password');
-                $userInfo->groups = array();
-                $config = new Zend_Config(Zend_Controller_Front::getInstance()->getParam('bootstrap')->getOptions());
-                if (isset($config->zwei->session->namespace)) $userInfo->sessionNamespace = $config->zwei->session->namespace;
-                $authStorage = $auth->getStorage();
-                $authStorage->write($userInfo);
+                Zwei_Admin_Auth::initUserInfo($authAdapter);
+            } else {
+                Console::error("Usuario o Password incorrectos.");
             }
+        } else {
+            $userInfo = Zend_Auth::getInstance()->getStorage()->read();
         }
-        
-        $userInfo = Zend_Auth::getInstance()->getStorage()->read();
         $options = Zend_Controller_Front::getInstance()->getParam("bootstrap")->getApplication()->getOptions();
         $config = new Zend_Config($options);
         if (isset($config->zwei->session->namespace)) {
             return (isset($userInfo->sessionNamespace) && $config->zwei->session->namespace == $userInfo->sessionNamespace) ? true : false;
         } else {
             return true;
-        }
+        }    
     }
+    
     /**
-     * Authentification params against DB Table
+     * Autentificación contra DB.
+     * 
      * @return Zend_Auth_Adapter_DbTable
      */
-    public function getAuthAdapter($hash = 'MD5') {
+    public function getAuthAdapter($hash = 'MD5')
+    {
         $resource = Zend_Controller_Front::getInstance()->getParam("bootstrap")->getResource("multidb");
         $dbAdapter = isset($resource) && $resource->getDb("auth") ?
             $resource->getDb("auth") :
             Zend_Db_Table::getDefaultAdapter();
-        
+    
         $authAdapter = new Zend_Auth_Adapter_DbTable($dbAdapter);
         $authUsersTable = 'acl_users';
         $authUserName = 'user_name';
         $authPassword = 'password';
-        
+    
         $authAdapter->setTableName($authUsersTable)
             ->setIdentityColumn($authUserName)
             ->setCredentialColumn($authPassword);
@@ -111,36 +120,41 @@ class Zwei_Admin_Auth
             $authAdapter->setCredentialTreatment('? and approved="1"');
         }
         
+        
         return $authAdapter;
     }
     
-
-
-    public static function initUserInfo($authAdapter) {
+    /**
+     * Inicializa la información de sesión con datos del usuario en DB.
+     * 
+     * @param Zend_Auth_Adapter_DbTable $authAdapter
+     */
+    public static function initUserInfo($authAdapter)
+    {
         $auth = Zend_Auth::getInstance();
         $userInfo = $authAdapter->getResultRowObject(null, 'password');
-    
+        
         $options = Zend_Controller_Front::getInstance()->getParam("bootstrap")->getApplication()->getOptions();
         $config = new Zend_Config($options);
-    
+        
         if (isset($config->zwei->session->namespace)) {
             $userInfo->sessionNamespace = $config->zwei->session->namespace;
         }
-    
+        
         $authStorage = $auth->getStorage();
         $aclUsersGroupsModel = new AclUsersGroupsModel();
-    
+        
         $buffGroups = $aclUsersGroupsModel->findByUserId($userInfo->id);
         $groups = array();
-    
+        
         foreach ($buffGroups as $g) {
             $groups[] = $g['acl_groups_id'];
         }
-    
-    
+        
+        
         $userInfo->groups = $groups;
         $authStorage->write($userInfo);
-        
+        Console::log($userInfo);
         /*Guardar sesion en base de datos, si tabla existe*/
         try {
             $db = Zend_Db_Table::getDefaultAdapter();
@@ -165,6 +179,7 @@ class Zwei_Admin_Auth
         } catch (Exception $e) {
             Console::error($e->getMessage(), true);
         } //PDOException is not caught :facepalm:
+
     }
     
     /**

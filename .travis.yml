@@ -6,7 +6,7 @@ php:
   #- hhvm
   #- nightly
 before_script:
-  ant user-testing-deps -v
+  # ant user-testing-deps -v
 script:
   ant quick-build -v
 branches:
